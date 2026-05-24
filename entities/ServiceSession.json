@@ -1,0 +1,42 @@
+{
+  "name": "ServiceSession",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Vehicle ID"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Date"
+    },
+    "garage_name": {
+      "type": "string",
+      "title": "Garage Name / Location"
+    },
+    "odometer_at_entry": {
+      "type": "number",
+      "title": "Odometer at Entry (km)"
+    },
+    "mechanic_name": {
+      "type": "string",
+      "title": "Assigned Mechanic"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": ["open", "closed"],
+      "default": "open"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "closed_at": {
+      "type": "string",
+      "title": "Closed At"
+    }
+  },
+  "required": ["vehicle_id", "date", "garage_name", "odometer_at_entry"]
+}

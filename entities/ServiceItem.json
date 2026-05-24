@@ -1,0 +1,69 @@
+{
+  "name": "ServiceItem",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "title": "Session ID"
+    },
+    "vehicle_id": {
+      "type": "string",
+      "title": "Vehicle ID"
+    },
+    "item_name": {
+      "type": "string",
+      "title": "Item Name"
+    },
+    "action": {
+      "type": "string",
+      "title": "Action",
+      "enum": ["replaced", "repaired", "checked", "adjusted"]
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "is_part_replacement": {
+      "type": "boolean",
+      "title": "Is Part Replacement",
+      "default": false
+    },
+    "old_serial": {
+      "type": "string",
+      "title": "Old Part Serial"
+    },
+    "old_condition": {
+      "type": "string",
+      "title": "Old Part Condition"
+    },
+    "old_removal_reason": {
+      "type": "string",
+      "title": "Reason Removed"
+    },
+    "new_serial": {
+      "type": "string",
+      "title": "New Part Serial"
+    },
+    "new_brand": {
+      "type": "string",
+      "title": "New Part Brand"
+    },
+    "new_condition": {
+      "type": "string",
+      "title": "New Part Condition at Install"
+    },
+    "part_position": {
+      "type": "string",
+      "title": "Position",
+      "enum": [
+        "front-left",
+        "front-right",
+        "rear-left",
+        "rear-right",
+        "spare",
+        "n/a"
+      ]
+    }
+  },
+  "required": ["session_id", "vehicle_id", "item_name", "action"]
+}

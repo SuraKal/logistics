@@ -1,0 +1,37 @@
+{
+  "name": "Driver",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "license_number": {
+      "type": "string",
+      "title": "License Number"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "assigned_vehicle_id": {
+      "type": "string",
+      "title": "Assigned Vehicle ID"
+    },
+    "user_email": {
+      "type": "string",
+      "title": "User Email"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": ["active", "inactive", "on_trip"],
+      "default": "active"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": ["name", "license_number", "phone"]
+}

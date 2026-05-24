@@ -1,0 +1,64 @@
+{
+  "name": "VehicleComponent",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Vehicle ID"
+    },
+    "component_type": {
+      "type": "string",
+      "title": "Component Type",
+      "enum": ["tire", "battery", "brake_pad", "filter", "belt", "other"]
+    },
+    "name": {
+      "type": "string",
+      "title": "Component Name"
+    },
+    "serial_number": {
+      "type": "string",
+      "title": "Serial Number"
+    },
+    "position": {
+      "type": "string",
+      "title": "Position",
+      "enum": [
+        "front-left",
+        "front-right",
+        "rear-left",
+        "rear-right",
+        "spare",
+        "n/a"
+      ]
+    },
+    "brand": {
+      "type": "string",
+      "title": "Brand"
+    },
+    "type_detail": {
+      "type": "string",
+      "title": "Type Detail"
+    },
+    "health_status": {
+      "type": "string",
+      "title": "Health Status",
+      "enum": ["good", "worn", "needs_replacement"],
+      "default": "good"
+    },
+    "install_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Install Date"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active",
+      "default": true
+    }
+  },
+  "required": ["vehicle_id", "component_type", "serial_number"]
+}

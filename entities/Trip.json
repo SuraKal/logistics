@@ -1,0 +1,72 @@
+{
+  "name": "Trip",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Vehicle ID"
+    },
+    "driver_id": {
+      "type": "string",
+      "title": "Driver ID"
+    },
+    "driver_name": {
+      "type": "string",
+      "title": "Driver Name"
+    },
+    "origin": {
+      "type": "string",
+      "title": "Origin"
+    },
+    "destination": {
+      "type": "string",
+      "title": "Destination"
+    },
+    "departure_datetime": {
+      "type": "string",
+      "title": "Scheduled Departure"
+    },
+    "cargo_description": {
+      "type": "string",
+      "title": "Cargo / Load Description"
+    },
+    "load_weight": {
+      "type": "string",
+      "title": "Load Weight"
+    },
+    "load_notes": {
+      "type": "string",
+      "title": "Load Notes"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": ["draft", "confirmed", "departed", "arrived", "closed"],
+      "default": "draft"
+    },
+    "departed_at": {
+      "type": "string",
+      "title": "Departed At"
+    },
+    "arrived_at": {
+      "type": "string",
+      "title": "Arrived At"
+    },
+    "dispatcher_notes": {
+      "type": "string",
+      "title": "Dispatcher Notes"
+    },
+    "has_vehicle_warnings": {
+      "type": "boolean",
+      "title": "Vehicle Has Warnings",
+      "default": false
+    }
+  },
+  "required": [
+    "vehicle_id",
+    "driver_name",
+    "origin",
+    "destination",
+    "departure_datetime"
+  ]
+}

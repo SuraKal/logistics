@@ -1,0 +1,57 @@
+{
+  "name": "MaintenanceSchedule",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Vehicle ID"
+    },
+    "name": {
+      "type": "string",
+      "title": "Service Name"
+    },
+    "interval_type": {
+      "type": "string",
+      "title": "Interval Type",
+      "enum": ["km", "time"]
+    },
+    "interval_value": {
+      "type": "number",
+      "title": "Interval Value"
+    },
+    "interval_unit": {
+      "type": "string",
+      "title": "Time Unit",
+      "enum": ["days", "weeks", "months"]
+    },
+    "last_done_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Last Done Date"
+    },
+    "last_done_mileage": {
+      "type": "number",
+      "title": "Last Done Mileage (km)"
+    },
+    "next_due_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Next Due Date"
+    },
+    "next_due_mileage": {
+      "type": "number",
+      "title": "Next Due Mileage (km)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": ["ok", "due_soon", "overdue"],
+      "default": "ok"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": ["vehicle_id", "name", "interval_type", "interval_value"]
+}

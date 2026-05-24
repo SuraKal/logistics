@@ -1,0 +1,47 @@
+{
+  "name": "Vehicle",
+  "type": "object",
+  "properties": {
+    "plate_number": {
+      "type": "string",
+      "title": "Plate Number"
+    },
+    "make": {
+      "type": "string",
+      "title": "Make"
+    },
+    "model": {
+      "type": "string",
+      "title": "Model"
+    },
+    "year": {
+      "type": "number",
+      "title": "Year"
+    },
+    "vehicle_type": {
+      "type": "string",
+      "title": "Type",
+      "enum": ["truck", "car", "van", "other"]
+    },
+    "current_mileage": {
+      "type": "number",
+      "title": "Current Mileage (km)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": ["active", "in_garage", "inactive"],
+      "default": "active"
+    },
+    "fuel_level": {
+      "type": "string",
+      "title": "Fuel Level",
+      "enum": ["full", "3/4", "1/2", "1/4", "empty"]
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": ["plate_number", "make", "model", "year", "current_mileage"]
+}

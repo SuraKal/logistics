@@ -1,0 +1,70 @@
+{
+  "name": "HandoverCheck",
+  "type": "object",
+  "properties": {
+    "trip_id": {
+      "type": "string",
+      "title": "Trip ID"
+    },
+    "vehicle_id": {
+      "type": "string",
+      "title": "Vehicle ID"
+    },
+    "driver_name": {
+      "type": "string",
+      "title": "Driver Name"
+    },
+    "check_type": {
+      "type": "string",
+      "title": "Check Type",
+      "enum": ["pre_trip", "post_trip"]
+    },
+    "odometer": {
+      "type": "number",
+      "title": "Odometer (km)"
+    },
+    "fuel_level": {
+      "type": "string",
+      "title": "Fuel Level",
+      "enum": ["full", "3/4", "1/2", "1/4", "empty"]
+    },
+    "condition_notes": {
+      "type": "string",
+      "title": "General Condition Notes"
+    },
+    "tire_fl_serial": {
+      "type": "string",
+      "title": "Tire FL Serial"
+    },
+    "tire_fr_serial": {
+      "type": "string",
+      "title": "Tire FR Serial"
+    },
+    "tire_rl_serial": {
+      "type": "string",
+      "title": "Tire RL Serial"
+    },
+    "tire_rr_serial": {
+      "type": "string",
+      "title": "Tire RR Serial"
+    },
+    "mismatches_flagged": {
+      "type": "boolean",
+      "title": "Mismatches Flagged",
+      "default": false
+    },
+    "mismatch_details": {
+      "type": "string",
+      "title": "Mismatch Details"
+    },
+    "mismatch_explanation": {
+      "type": "string",
+      "title": "Mismatch Explanation"
+    },
+    "signed_off_at": {
+      "type": "string",
+      "title": "Signed Off At"
+    }
+  },
+  "required": ["trip_id", "vehicle_id", "driver_name", "check_type"]
+}
