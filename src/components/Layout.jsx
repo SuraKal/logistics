@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { appClient } from "@/lib/local-client";
 import {
@@ -14,9 +14,10 @@ import {
   LogOut,
   Menu,
   X,
+  Sparkles,
 } from "lucide-react";
-import { Outlet } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const NAV_ITEMS = [
   { path: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -26,6 +27,55 @@ const NAV_ITEMS = [
   { path: "/drivers", label: "Drivers", icon: Users },
   { path: "/notifications", label: "Notifications", icon: Bell },
 ];
+
+const pageMeta = {
+  "/": {
+    title: "Fleet Command Center",
+    description: "Operational visibility across vehicles, dispatch, maintenance, and alerts.",
+  },
+  "/vehicles": {
+    title: "Vehicle Registry",
+    description: "Track readiness, service exposure, and component health across the fleet.",
+  },
+  "/garage-sessions": {
+    title: "Garage Sessions",
+    description: "Monitor inspections, open work, and service progress in one workspace.",
+  },
+  "/trips": {
+    title: "Dispatch Operations",
+    description: "Coordinate active trips, routing status, and trip-level execution.",
+  },
+  "/drivers": {
+    title: "Driver Directory",
+    description: "Keep visibility into driver assignments, contact data, and trip activity.",
+  },
+  "/notifications": {
+    title: "Notifications",
+    description: "Review system activity, escalations, and fleet events by priority.",
+  },
+};
+
+function getPageInfo(pathname) {
+  if (pathname.startsWith("/vehicles/")) {
+    return {
+      title: "Vehicle Profile",
+      description: "Detailed maintenance, components, and service history for a selected asset.",
+    };
+  }
+  if (pathname.startsWith("/garage-sessions/")) {
+    return {
+      title: "Service Session",
+      description: "Review workshop records, parts, and status updates for a maintenance session.",
+    };
+  }
+  if (pathname.startsWith("/trips/")) {
+    return {
+      title: "Trip Detail",
+      description: "Inspect dispatch status, assignment flow, and trip execution details.",
+    };
+  }
+  return pageMeta[pathname] || pageMeta["/"];
+}
 
 export default function Layout() {
   const location = useLocation();
@@ -42,51 +92,84 @@ export default function Layout() {
       .catch(() => {});
   }, [location.pathname]);
 
-  const visibleItems = NAV_ITEMS;
+  const pageInfo = getPageInfo(location.pathname);
+  const role = currentUser?.role
+    ?.replace(/_/g, " ")
+    ?.replace(/\b\w/g, (match) => match.toUpperCase());
 
-  const NavContent = () => (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center gap-3 px-4 py-5 border-b border-slate-700">
-        <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center flex-shrink-0">
-          <Truck className="w-4 h-4 text-white" />
+  const NavContent = ({ mobile = false }) => (
+    <div className="flex h-full flex-col">
+      <div className="border-b border-slate-200/80 px-4 py-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-[0_18px_40px_-22px_rgba(15,23,42,0.65)]">
+            <Truck className="h-5 w-5" />
+          </div>
+          {(!collapsed || mobile) && (
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-600">
+                FleetOps
+              </p>
+              <h1 className="text-base font-semibold text-slate-900">
+                Logistics OS
+              </h1>
+            </div>
+          )}
         </div>
-        {!collapsed && (
-          <span className="font-bold text-white text-sm tracking-wide">
-            FleetOps
-          </span>
+      </div>
+
+      <div className="px-3 pt-4">
+        {(!collapsed || mobile) && (
+          <div className="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-blue-50 px-4 py-4 shadow-sm">
+            <div className="mb-2 flex items-center gap-2 text-sky-700">
+              <Sparkles className="h-4 w-4" />
+              <span className="text-xs font-semibold uppercase tracking-[0.18em]">
+                Operations
+              </span>
+            </div>
+            <p className="text-sm font-medium text-slate-900">
+              Cleaner visibility for enterprise fleet workflows.
+            </p>
+          </div>
         )}
       </div>
 
-      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
-        {visibleItems.map((item) => {
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const active =
             location.pathname === item.path ||
             (item.path !== "/" && location.pathname.startsWith(item.path));
+
           return (
             <Link
               key={item.path}
               to={item.path}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-sm font-medium ${
+              className={`group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition-all ${
                 active
-                  ? "bg-amber-500 text-white"
-                  : "text-slate-400 hover:text-white hover:bg-slate-700"
+                  ? "bg-slate-950 text-white shadow-[0_18px_36px_-24px_rgba(15,23,42,0.8)]"
+                  : "text-slate-600 hover:bg-slate-100/90 hover:text-slate-900"
               }`}
             >
-              <div className="relative flex-shrink-0">
-                <Icon className="w-4 h-4" />
+              <div
+                className={`relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl ${
+                  active
+                    ? "bg-white/14 text-white"
+                    : "bg-slate-100 text-slate-500 group-hover:bg-white"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
                 {item.path === "/notifications" && unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-[8px] text-white flex items-center justify-center">
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white">
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 )}
               </div>
-              {!collapsed && <span>{item.label}</span>}
-              {!collapsed &&
+              {(!collapsed || mobile) && <span>{item.label}</span>}
+              {(!collapsed || mobile) &&
                 item.path === "/notifications" &&
                 unreadCount > 0 && (
-                  <Badge className="ml-auto bg-red-500 text-white text-xs px-1.5 py-0">
+                  <Badge className="ml-auto rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-semibold text-white hover:bg-red-500">
                     {unreadCount}
                   </Badge>
                 )}
@@ -95,88 +178,119 @@ export default function Layout() {
         })}
       </nav>
 
-      <div className="px-2 py-4 border-t border-slate-700">
-        {!collapsed && (
-          <div className="px-3 py-2 mb-2">
-            <p className="text-xs text-slate-400 truncate">
-              {currentUser?.full_name || currentUser?.email}
-            </p>
-            <span className="mt-1 inline-block text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full">
-              Admin
-            </span>
-          </div>
-        )}
-        <button
-          onClick={() => appClient.auth.logout()}
-          className="flex items-center gap-3 w-full px-3 py-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-lg transition-colors text-sm"
+      <div className="border-t border-slate-200/80 p-3">
+        <div
+          className={`rounded-2xl border border-slate-200/80 bg-slate-50/80 p-3 ${collapsed && !mobile ? "flex justify-center" : ""}`}
         >
-          <LogOut className="w-4 h-4 flex-shrink-0" />
-          {!collapsed && <span>Logout</span>}
-        </button>
+          {(!collapsed || mobile) && (
+            <div className="mb-3">
+              <p className="truncate text-sm font-semibold text-slate-900">
+                {currentUser?.full_name || currentUser?.email}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                {role || "Administrator"}
+              </p>
+            </div>
+          )}
+          <Button
+            onClick={() => appClient.auth.logout()}
+            variant="ghost"
+            className={`h-10 text-slate-600 hover:bg-white hover:text-red-600 ${collapsed && !mobile ? "w-10 px-0" : "w-full justify-start"}`}
+          >
+            <LogOut className="h-4 w-4" />
+            {(!collapsed || mobile) && <span>Logout</span>}
+          </Button>
+        </div>
       </div>
     </div>
   );
 
   return (
-    <div className="flex h-screen bg-slate-50">
-      {/* Desktop Sidebar */}
-      <aside
-        className={`hidden md:flex flex-col bg-slate-900 transition-all duration-300 flex-shrink-0 ${collapsed ? "w-16" : "w-56"}`}
-      >
-        <NavContent />
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="absolute left-0 top-1/2 -translate-y-1/2 ml-1 hidden md:flex items-center justify-center w-5 h-5 bg-slate-700 text-slate-400 rounded-full hover:bg-amber-500 hover:text-white"
-          style={{
-            left: collapsed ? "52px" : "212px",
-            transition: "left 0.3s",
-          }}
+    <div className="app-shell">
+      <div className="flex min-h-screen">
+        <aside
+          className={`relative hidden border-r border-slate-200/70 bg-white/88 backdrop-blur-xl transition-all duration-300 md:flex md:flex-col ${collapsed ? "w-[96px]" : "w-[288px]"}`}
         >
-          {collapsed ? (
-            <ChevronRight className="w-3 h-3" />
-          ) : (
-            <ChevronLeft className="w-3 h-3" />
-          )}
-        </button>
-      </aside>
+          <NavContent />
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="absolute -right-4 top-8 hidden h-8 w-8 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-500 shadow-sm transition-colors hover:bg-slate-950 hover:text-white md:flex"
+          >
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronLeft className="h-4 w-4" />
+            )}
+          </button>
+        </aside>
 
-      {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-slate-900 flex items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-amber-500 rounded-lg flex items-center justify-center">
-            <Truck className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-bold text-white text-sm">FleetOps</span>
-        </div>
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="text-white"
-        >
-          {mobileOpen ? (
-            <X className="w-5 h-5" />
-          ) : (
-            <Menu className="w-5 h-5" />
+        <div className="flex min-h-screen min-w-0 flex-1 flex-col">
+          <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/72 backdrop-blur-xl">
+            <div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+              <div className="flex min-w-0 items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="md:hidden"
+                  onClick={() => setMobileOpen(true)}
+                >
+                  <Menu className="h-4 w-4" />
+                </Button>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-600">
+                    Enterprise Logistics
+                  </p>
+                  <h2 className="truncate text-xl font-semibold text-slate-950">
+                    {pageInfo.title}
+                  </h2>
+                </div>
+              </div>
+
+              <div className="hidden items-center gap-3 md:flex">
+                <div className="rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-2 shadow-sm">
+                  <p className="text-xs text-slate-500">Workspace</p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    Live demo environment
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="px-4 pb-4 sm:px-6 lg:px-8">
+              <p className="max-w-3xl text-sm text-slate-500">
+                {pageInfo.description}
+              </p>
+            </div>
+          </header>
+
+          {mobileOpen && (
+            <div className="fixed inset-0 z-50 md:hidden">
+              <div
+                className="absolute inset-0 bg-slate-950/22 backdrop-blur-sm"
+                onClick={() => setMobileOpen(false)}
+              />
+              <div className="absolute left-0 top-0 h-full w-[300px] border-r border-slate-200/80 bg-white shadow-2xl">
+                <div className="flex items-center justify-between border-b border-slate-200/80 px-4 py-4">
+                  <span className="text-sm font-semibold text-slate-900">
+                    Navigation
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <NavContent mobile />
+              </div>
+            </div>
           )}
-        </button>
+
+          <main className="min-w-0 flex-1">
+            <Outlet />
+          </main>
+        </div>
       </div>
-
-      {/* Mobile Drawer */}
-      {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-40 flex">
-          <div className="w-56 bg-slate-900 flex flex-col pt-14">
-            <NavContent />
-          </div>
-          <div
-            className="flex-1 bg-black/50"
-            onClick={() => setMobileOpen(false)}
-          />
-        </div>
-      )}
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto md:pt-0 pt-14">
-        <Outlet />
-      </main>
     </div>
   );
 }

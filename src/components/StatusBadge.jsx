@@ -42,7 +42,7 @@ export default function StatusBadge({ status, type = "default" }) {
 
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize ${cls}`}
+      className={`inline-flex items-center rounded-full border border-white/70 px-2.5 py-1 text-[11px] font-semibold capitalize shadow-sm ${cls}`}
     >
       {label}
     </span>

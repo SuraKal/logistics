@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClientInstance } from "@/lib/query-client";
@@ -5,15 +6,24 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import PageNotFound from "./lib/PageNotFound";
 import { AuthProvider, useAuth } from "@/lib/AuthContext";
 import Layout from "./components/Layout";
-import Dashboard from "./pages/Dashboard";
-import Vehicles from "./pages/Vehicles";
-import VehicleDetail from "./pages/VehicleDetail";
-import GarageSessions from "./pages/GarageSessions";
-import ServiceSessionDetail from "./pages/ServiceSessionDetail";
-import Trips from "./pages/Trips";
-import TripDetail from "./pages/TripDetail";
-import Drivers from "./pages/Drivers";
-import Notifications from "./pages/Notifications";
+
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Vehicles = lazy(() => import("./pages/Vehicles"));
+const VehicleDetail = lazy(() => import("./pages/VehicleDetail"));
+const GarageSessions = lazy(() => import("./pages/GarageSessions"));
+const ServiceSessionDetail = lazy(() => import("./pages/ServiceSessionDetail"));
+const Trips = lazy(() => import("./pages/Trips"));
+const TripDetail = lazy(() => import("./pages/TripDetail"));
+const Drivers = lazy(() => import("./pages/Drivers"));
+const Notifications = lazy(() => import("./pages/Notifications"));
+
+function RouteLoader() {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center">
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-800"></div>
+    </div>
+  );
+}
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth } = useAuth();
@@ -27,21 +37,22 @@ const AuthenticatedApp = () => {
   }
 
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/vehicles" element={<Vehicles />} />
-        <Route path="/vehicles/:id" element={<VehicleDetail />} />
-        <Route path="/garage-sessions" element={<GarageSessions />} />
-        <Route path="/garage-sessions/:id" element={<ServiceSessionDetail />} />
-        <Route path="/trips" element={<Trips />} />
-        <Route path="/trips/:id" element={<TripDetail />} />
-        <Route path="/drivers" element={<Drivers />} />
-        <Route path="/notifications" element={<Notifications />} />
-
-        <Route path="*" element={<PageNotFound />} />
-      </Route>
-    </Routes>
+    <Suspense fallback={<RouteLoader />}>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/vehicles" element={<Vehicles />} />
+          <Route path="/vehicles/:id" element={<VehicleDetail />} />
+          <Route path="/garage-sessions" element={<GarageSessions />} />
+          <Route path="/garage-sessions/:id" element={<ServiceSessionDetail />} />
+          <Route path="/trips" element={<Trips />} />
+          <Route path="/trips/:id" element={<TripDetail />} />
+          <Route path="/drivers" element={<Drivers />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 };
 
