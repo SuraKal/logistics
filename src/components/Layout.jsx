@@ -2,13 +2,9 @@ import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { appClient } from "@/lib/local-client";
+import { getNavItemsForRole, getRoleLabel } from "@/lib/role-access";
 import {
   Truck,
-  Wrench,
-  Navigation,
-  Users,
-  Bell,
-  LayoutDashboard,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -19,70 +15,92 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-const NAV_ITEMS = [
-  { path: "/", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/vehicles", label: "Vehicles", icon: Truck },
-  { path: "/garage-sessions", label: "Garage", icon: Wrench },
-  { path: "/trips", label: "Dispatch", icon: Navigation },
-  { path: "/drivers", label: "Drivers", icon: Users },
-  { path: "/notifications", label: "Notifications", icon: Bell },
-];
-
 const pageMeta = {
-  "/": {
-    title: "Fleet Command Center",
-    description: "Operational visibility across vehicles, dispatch, maintenance, and alerts.",
-  },
   "/vehicles": {
-    title: "Vehicle Registry",
-    description: "Track readiness, service exposure, and component health across the fleet.",
+    title: "Vehicles",
+    description: "See vehicle photos, files, and mileage.",
   },
   "/garage-sessions": {
-    title: "Garage Sessions",
-    description: "Monitor inspections, open work, and service progress in one workspace.",
+    title: "Garage",
+    description: "See garage jobs, parts, and service notes.",
   },
   "/trips": {
-    title: "Dispatch Operations",
-    description: "Coordinate active trips, routing status, and trip-level execution.",
+    title: "Trips",
+    description: "See trips, notes, and trip photos.",
   },
   "/drivers": {
-    title: "Driver Directory",
-    description: "Keep visibility into driver assignments, contact data, and trip activity.",
+    title: "Drivers",
+    description: "See driver records and trip history.",
+  },
+  "/finance": {
+    title: "Finance",
+    description: "See costs and total spending.",
+  },
+  "/hr": {
+    title: "HR",
+    description: "Coming soon.",
+  },
+  "/client-management": {
+    title: "Client management",
+    description: "Coming soon.",
   },
   "/notifications": {
-    title: "Notifications",
-    description: "Review system activity, escalations, and fleet events by priority.",
+    title: "Alerts",
+    description: "See the latest alerts.",
   },
 };
 
-function getPageInfo(pathname) {
+const homePageMeta = {
+  admin: {
+    title: "Dashboard",
+    description: "See all work in the system.",
+  },
+  driver: {
+    title: "My trips",
+    description: "See your trips, issues, and KM reports.",
+  },
+  dispatcher: {
+    title: "Dispatch",
+    description: "Add trips and assign drivers.",
+  },
+  main_mechanic: {
+    title: "Garage",
+    description: "Open jobs, log parts, and close repairs.",
+  },
+};
+
+function getPageInfo(pathname, role) {
+  if (pathname === "/") {
+    return homePageMeta[role] || homePageMeta.admin;
+  }
   if (pathname.startsWith("/vehicles/")) {
     return {
-      title: "Vehicle Profile",
-      description: "Detailed maintenance, components, and service history for a selected asset.",
+      title: "Vehicle",
+      description: "See photos, files, and service history for one vehicle.",
     };
   }
   if (pathname.startsWith("/garage-sessions/")) {
     return {
-      title: "Service Session",
-      description: "Review workshop records, parts, and status updates for a maintenance session.",
+      title: "Garage Job",
+      description: "See work notes and files for this garage job.",
     };
   }
   if (pathname.startsWith("/trips/")) {
     return {
-      title: "Trip Detail",
-      description: "Inspect dispatch status, assignment flow, and trip execution details.",
+      title: "Trip",
+      description: "See trip details, notes, and photos.",
     };
   }
   return pageMeta[pathname] || pageMeta["/"];
 }
 
-export default function Layout() {
+export default function Layout({ children }) {
   const location = useLocation();
   const { currentUser } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const navItems = getNavItemsForRole(currentUser?.role);
 
   useEffect(() => {
     appClient.entities.Notification.filter({ is_read: false })
@@ -92,10 +110,8 @@ export default function Layout() {
       .catch(() => {});
   }, [location.pathname]);
 
-  const pageInfo = getPageInfo(location.pathname);
-  const role = currentUser?.role
-    ?.replace(/_/g, " ")
-    ?.replace(/\b\w/g, (match) => match.toUpperCase());
+  const pageInfo = getPageInfo(location.pathname, currentUser?.role);
+  const role = getRoleLabel(currentUser?.role);
 
   const NavContent = ({ mobile = false }) => (
     <div className="flex h-full flex-col">
@@ -107,11 +123,9 @@ export default function Layout() {
           {(!collapsed || mobile) && (
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-600">
-                FleetOps
+                Fleet app
               </p>
-              <h1 className="text-base font-semibold text-slate-900">
-                Logistics OS
-              </h1>
+              <h1 className="text-base font-semibold text-slate-900">Work board</h1>
             </div>
           )}
         </div>
@@ -122,19 +136,17 @@ export default function Layout() {
           <div className="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-blue-50 px-4 py-4 shadow-sm">
             <div className="mb-2 flex items-center gap-2 text-sky-700">
               <Sparkles className="h-4 w-4" />
-              <span className="text-xs font-semibold uppercase tracking-[0.18em]">
-                Operations
-              </span>
+              <span className="text-xs font-semibold uppercase tracking-[0.18em]">Today</span>
             </div>
             <p className="text-sm font-medium text-slate-900">
-              Cleaner visibility for enterprise fleet workflows.
+              Simple work view for {role || "your"} tasks.
             </p>
           </div>
         )}
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        {NAV_ITEMS.map((item) => {
+        {navItems.map((item) => {
           const Icon = item.icon;
           const active =
             location.pathname === item.path ||
@@ -187,9 +199,7 @@ export default function Layout() {
               <p className="truncate text-sm font-semibold text-slate-900">
                 {currentUser?.full_name || currentUser?.email}
               </p>
-              <p className="mt-1 text-xs text-slate-500">
-                {role || "Administrator"}
-              </p>
+              <p className="mt-1 text-xs text-slate-500">{role || "Admin"}</p>
             </div>
           )}
           <Button
@@ -198,7 +208,7 @@ export default function Layout() {
             className={`h-10 text-slate-600 hover:bg-white hover:text-red-600 ${collapsed && !mobile ? "w-10 px-0" : "w-full justify-start"}`}
           >
             <LogOut className="h-4 w-4" />
-            {(!collapsed || mobile) && <span>Logout</span>}
+            {(!collapsed || mobile) && <span>Sign out</span>}
           </Button>
         </div>
       </div>
@@ -238,7 +248,7 @@ export default function Layout() {
                 </Button>
                 <div className="min-w-0">
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-600">
-                    Enterprise Logistics
+                    Fleet app
                   </p>
                   <h2 className="truncate text-xl font-semibold text-slate-950">
                     {pageInfo.title}
@@ -287,7 +297,7 @@ export default function Layout() {
           )}
 
           <main className="min-w-0 flex-1">
-            <Outlet />
+            {children ?? <Outlet />}
           </main>
         </div>
       </div>

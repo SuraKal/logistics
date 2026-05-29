@@ -31,31 +31,6 @@
       "type": "string",
       "title": "Notes"
     },
-    "is_part_change": {
-      "type": "boolean",
-      "title": "Part Changed",
-      "default": false
-    },
-    "old_part_serial": {
-      "type": "string",
-      "title": "Old Part Serial"
-    },
-    "old_part_condition": {
-      "type": "string",
-      "title": "Old Part Condition"
-    },
-    "new_part_serial": {
-      "type": "string",
-      "title": "New Part Serial"
-    },
-    "new_part_brand": {
-      "type": "string",
-      "title": "New Part Brand"
-    },
-    "part_position": {
-      "type": "string",
-      "title": "Position"
-    },
     "logged_by": {
       "type": "string",
       "title": "Logged By"

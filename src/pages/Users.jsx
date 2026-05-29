@@ -21,18 +21,14 @@ import {
 
 const ROLES = [
   "admin",
-  "fleet_manager",
   "dispatcher",
-  "mechanic",
-  "garage_person",
+  "main_mechanic",
   "driver",
 ];
 const ROLE_COLORS = {
   admin: "bg-red-100 text-red-700",
-  fleet_manager: "bg-blue-100 text-blue-700",
   dispatcher: "bg-violet-100 text-violet-700",
-  mechanic: "bg-amber-100 text-amber-700",
-  garage_person: "bg-orange-100 text-orange-700",
+  main_mechanic: "bg-amber-100 text-amber-700",
   driver: "bg-emerald-100 text-emerald-700",
 };
 
@@ -60,11 +56,11 @@ export default function Users() {
 
   if (role !== "admin")
     return (
-      <div className="p-6 flex flex-col items-center justify-center h-full text-center">
-        <Shield className="w-12 h-12 text-slate-300 mb-3" />
-        <p className="text-slate-500">Admin access required</p>
-      </div>
-    );
+    <div className="p-6 flex flex-col items-center justify-center h-full text-center">
+      <Shield className="w-12 h-12 text-slate-300 mb-3" />
+      <p className="text-slate-500">Admin only</p>
+    </div>
+  );
 
   const handleUpdateRole = async () => {
     await appClient.entities.User.update(editUser.id, { role: newRole });
@@ -106,15 +102,15 @@ export default function Users() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">User Management</h1>
-          <p className="text-sm text-slate-500">{users.length} users</p>
-        </div>
-        <Button
-          className="bg-amber-500 hover:bg-amber-600 text-white"
-          onClick={() => setShowInvite(true)}
-        >
-          <Mail className="w-4 h-4 mr-2" /> Invite User
-        </Button>
+        <h1 className="text-2xl font-bold text-slate-800">People</h1>
+        <p className="text-sm text-slate-500">{users.length} users</p>
+      </div>
+      <Button
+        className="bg-amber-500 hover:bg-amber-600 text-white"
+        onClick={() => setShowInvite(true)}
+      >
+          <Mail className="w-4 h-4 mr-2" /> Add person
+      </Button>
       </div>
 
       <div className="relative mb-4">
@@ -131,9 +127,9 @@ export default function Users() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-slate-100 text-xs text-slate-400 uppercase">
-              <th className="text-left px-5 py-3">User</th>
+              <th className="text-left px-5 py-3">Person</th>
               <th className="text-left px-5 py-3">Role</th>
-              <th className="text-left px-5 py-3">Joined</th>
+              <th className="text-left px-5 py-3">Added</th>
               <th className="px-5 py-3"></th>
             </tr>
           </thead>
@@ -168,7 +164,7 @@ export default function Users() {
                       setNewRole(u.role || "driver");
                     }}
                   >
-                    <UserCog className="w-3 h-3 mr-1" /> Edit Role
+                  <UserCog className="w-3 h-3 mr-1" /> Change role
                   </Button>
                 </td>
               </tr>
@@ -186,9 +182,9 @@ export default function Users() {
       <Dialog open={!!editUser} onOpenChange={() => setEditUser(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>
-              Edit Role — {editUser?.full_name || editUser?.email}
-            </DialogTitle>
+          <DialogTitle>
+              Change role — {editUser?.full_name || editUser?.email}
+          </DialogTitle>
           </DialogHeader>
           <div className="py-3">
             <Label className="text-xs">Role</Label>
@@ -213,11 +209,11 @@ export default function Users() {
             >
               Cancel
             </Button>
-            <Button
+              <Button
               className="flex-1 bg-amber-500 hover:bg-amber-600 text-white"
               onClick={handleUpdateRole}
             >
-              Update Role
+              Save role
             </Button>
           </div>
         </DialogContent>
@@ -227,11 +223,11 @@ export default function Users() {
       <Dialog open={showInvite} onOpenChange={setShowInvite}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Invite New User</DialogTitle>
+            <DialogTitle>Add person</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-3">
             <div>
-              <Label className="text-xs">Email Address</Label>
+              <Label className="text-xs">Email</Label>
               <Input
                 type="email"
                 value={inviteEmail}
@@ -262,12 +258,12 @@ export default function Users() {
             >
               Cancel
             </Button>
-            <Button
+              <Button
               className="flex-1 bg-amber-500 hover:bg-amber-600 text-white"
               onClick={handleInvite}
               disabled={inviting}
             >
-              {inviting ? "Inviting..." : "Send Invite"}
+              {inviting ? "Saving..." : "Save person"}
             </Button>
           </div>
         </DialogContent>

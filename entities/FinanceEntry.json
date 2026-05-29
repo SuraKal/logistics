@@ -1,0 +1,32 @@
+{
+  "name": "FinanceEntry",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "title": "Date"
+    },
+    "cost_type": {
+      "type": "string",
+      "title": "Type",
+      "enum": ["service", "part", "other"]
+    },
+    "vehicle_id": {
+      "type": "string",
+      "title": "Vehicle ID"
+    },
+    "session_id": {
+      "type": "string",
+      "title": "Garage Job ID"
+    },
+    "amount": {
+      "type": "number",
+      "title": "Amount"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Note"
+    }
+  },
+  "required": ["date", "cost_type", "amount"]
+}

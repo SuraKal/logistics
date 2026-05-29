@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { appClient } from "@/lib/local-client";
 import { useAuth } from "@/lib/AuthContext";
-import { ArrowLeft, Download, Plus, Truck, Gauge, CalendarClock } from "lucide-react";
+import { ArrowLeft, Download, Plus, Truck, Gauge, CalendarClock, FileText, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +23,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import StatusBadge from "../components/StatusBadge";
 import { format, addDays, addMonths, addWeeks } from "date-fns";
 import { downloadVehicleReport } from "@/lib/vehicle-report";
+import MediaGallery from "@/components/MediaGallery";
+import { getMediaUrl, normalizeMediaItems } from "@/lib/media";
 
 function EmptyState({ children }) {
   return (
@@ -36,7 +38,7 @@ export default function VehicleDetail() {
   const { id } = useParams();
   const { currentUser } = useAuth();
   const role = currentUser?.role || "driver";
-  const canEdit = ["admin", "garage_person"].includes(role);
+  const canEdit = ["admin", "main_mechanic"].includes(role);
 
   const [vehicle, setVehicle] = useState(null);
   const [schedules, setSchedules] = useState([]);
@@ -50,17 +52,11 @@ export default function VehicleDetail() {
     interval_type: "km",
     interval_value: "",
     interval_unit: "months",
-    last_done_date: "",
-    last_done_mileage: "",
   });
   const [compForm, setCompForm] = useState({
     component_type: "tire",
     name: "",
     serial_number: "",
-    position: "front-left",
-    brand: "",
-    health_status: "good",
-    install_date: "",
   });
 
   const load = async () => {
@@ -91,17 +87,15 @@ export default function VehicleDetail() {
     const updates = {};
     if (
       form.interval_type === "km" &&
-      form.last_done_mileage &&
       form.interval_value
     ) {
-      updates.next_due_mileage = +form.last_done_mileage + +form.interval_value;
+      updates.next_due_mileage = (vehicle?.current_mileage || 0) + +form.interval_value;
     }
     if (
       form.interval_type === "time" &&
-      form.last_done_date &&
       form.interval_value
     ) {
-      const base = new Date(form.last_done_date);
+      const base = new Date();
       const next =
         form.interval_unit === "days"
           ? addDays(base, +form.interval_value)
@@ -148,7 +142,7 @@ export default function VehicleDetail() {
         message: `${schedForm.name} on vehicle ${vehicle?.plate_number} is ${status.replace("_", " ")}.`,
         severity: status === "overdue" ? "critical" : "warning",
         is_read: false,
-        recipient_roles: "admin,fleet_manager",
+        recipient_roles: "admin,main_mechanic",
         vehicle_plate: vehicle?.plate_number,
       });
     }
@@ -158,8 +152,6 @@ export default function VehicleDetail() {
       interval_type: "km",
       interval_value: "",
       interval_unit: "months",
-      last_done_date: "",
-      last_done_mileage: "",
     });
     load();
   };
@@ -168,16 +160,16 @@ export default function VehicleDetail() {
     await appClient.entities.VehicleComponent.create({
       ...compForm,
       vehicle_id: id,
+      position: "n/a",
+      health_status: "good",
+      install_date: new Date().toISOString().split("T")[0],
+      is_active: true,
     });
     setShowCompDlg(false);
     setCompForm({
       component_type: "tire",
       name: "",
       serial_number: "",
-      position: "front-left",
-      brand: "",
-      health_status: "good",
-      install_date: "",
     });
     load();
   };
@@ -211,6 +203,9 @@ export default function VehicleDetail() {
     return <div className="page-shell text-center text-slate-400">Loading...</div>;
   }
 
+  const vehiclePhoto = normalizeMediaItems(vehicle.photo_gallery)[0];
+  const contractFiles = normalizeMediaItems(vehicle.contract_document);
+
   return (
     <div className="page-shell">
       <Link
@@ -233,7 +228,7 @@ export default function VehicleDetail() {
               {vehicle.plate_number}
             </h1>
             <p className="mt-2 text-sm text-slate-500 sm:text-base">
-              {vehicle.year} {vehicle.make} {vehicle.model} • {vehicle.vehicle_type}
+              {vehicle.year} {vehicle.make} {vehicle.model} - {vehicle.vehicle_type}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <div className="rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 shadow-sm">
@@ -251,7 +246,7 @@ export default function VehicleDetail() {
                 <div className="flex items-center gap-2 text-slate-500">
                   <CalendarClock className="h-4 w-4" />
                   <span className="text-xs font-semibold uppercase tracking-[0.16em]">
-                    Service records
+                    Service history
                   </span>
                 </div>
                 <p className="mt-2 text-lg font-semibold text-slate-950">
@@ -262,13 +257,23 @@ export default function VehicleDetail() {
           </div>
 
           <div className="flex flex-col justify-between gap-4 rounded-[1.5rem] border border-slate-200/80 bg-white/90 p-5 shadow-sm">
+            {vehiclePhoto ? (
+              <img
+                src={getMediaUrl(vehiclePhoto)}
+                alt={vehicle.plate_number}
+                className="h-40 w-full rounded-2xl object-cover"
+              />
+            ) : (
+              <div className="flex h-40 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+                <Truck className="h-10 w-10" />
+              </div>
+            )}
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-600">
-                Asset profile
+                Vehicle file
               </p>
               <p className="mt-3 text-sm leading-6 text-slate-500">
-                Download the latest report or update maintenance and components
-                without leaving the vehicle workspace.
+                Download the vehicle report or update service details from here.
               </p>
             </div>
             <Button
@@ -278,23 +283,46 @@ export default function VehicleDetail() {
               disabled={isDownloading}
             >
               <Download className="mr-2 h-4 w-4" />
-              {isDownloading ? "Preparing..." : "Download Report"}
+              {isDownloading ? "Making file..." : "Download report"}
             </Button>
           </div>
         </div>
       </div>
 
+      <div className="mt-6 grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
+        <div className="subtle-panel p-5">
+          <div className="mb-4 flex items-center gap-2">
+            <ImageIcon className="h-4 w-4 text-slate-500" />
+            <h2 className="text-lg font-semibold text-slate-900">Photos</h2>
+          </div>
+          <MediaGallery
+            items={vehicle.photo_gallery}
+            emptyText="No vehicle photos yet."
+          />
+        </div>
+        <div className="subtle-panel p-5">
+          <div className="mb-4 flex items-center gap-2">
+            <FileText className="h-4 w-4 text-slate-500" />
+            <h2 className="text-lg font-semibold text-slate-900">Paper</h2>
+          </div>
+          <MediaGallery
+            items={contractFiles}
+            emptyText="No contract file yet."
+          />
+        </div>
+      </div>
+
       <Tabs defaultValue="maintenance" className="mt-6">
-        <TabsList className="mb-5 flex w-full flex-wrap justify-start gap-2 overflow-x-auto whitespace-nowrap p-1.5">
-          <TabsTrigger value="maintenance">Maintenance Schedule</TabsTrigger>
-          <TabsTrigger value="components">Components / Tires</TabsTrigger>
-          <TabsTrigger value="history">Service History</TabsTrigger>
+          <TabsList className="mb-5 flex w-full flex-wrap justify-start gap-2 overflow-x-auto whitespace-nowrap p-1.5">
+          <TabsTrigger value="maintenance">Service plan</TabsTrigger>
+          <TabsTrigger value="components">Parts</TabsTrigger>
+          <TabsTrigger value="history">Service history</TabsTrigger>
         </TabsList>
 
         <TabsContent value="maintenance">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-lg font-semibold text-slate-900">
-              Maintenance Schedule
+              Service plan
             </h2>
             {canEdit && (
               <Button size="sm" onClick={() => setShowSchedDlg(true)}>
@@ -304,7 +332,7 @@ export default function VehicleDetail() {
           </div>
           <div className="space-y-3">
             {schedules.length === 0 ? (
-              <EmptyState>No maintenance items configured.</EmptyState>
+              <EmptyState>No service items yet.</EmptyState>
             ) : (
               schedules.map((s) => (
                 <div
@@ -316,9 +344,9 @@ export default function VehicleDetail() {
                     <p className="mt-1 text-xs text-slate-500">
                       Every {s.interval_value}{" "}
                       {s.interval_type === "km" ? "km" : s.interval_unit}
-                      {s.next_due_date && ` • Due: ${s.next_due_date}`}
+                      {s.next_due_date && ` - Due: ${s.next_due_date}`}
                       {s.next_due_mileage &&
-                        ` • Due at: ${s.next_due_mileage?.toLocaleString()} km`}
+                        ` - Due at: ${s.next_due_mileage?.toLocaleString()} km`}
                     </p>
                   </div>
                   <StatusBadge status={s.status} />
@@ -330,7 +358,7 @@ export default function VehicleDetail() {
 
         <TabsContent value="components">
           <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold text-slate-900">Components / Tires</h2>
+            <h2 className="text-lg font-semibold text-slate-900">Parts</h2>
             {canEdit && (
               <Button size="sm" onClick={() => setShowCompDlg(true)}>
                 <Plus className="mr-1 h-3.5 w-3.5" /> Add
@@ -340,14 +368,14 @@ export default function VehicleDetail() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {components.length === 0 ? (
               <div className="md:col-span-2">
-                <EmptyState>No components recorded.</EmptyState>
+                <EmptyState>No parts recorded.</EmptyState>
               </div>
             ) : (
               components.map((c) => (
                 <div key={c.id} className="subtle-panel p-5">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
-                      {c.component_type} • {c.position}
+                      {c.component_type} - {c.position}
                     </span>
                     <StatusBadge status={c.health_status} />
                   </div>
@@ -370,7 +398,7 @@ export default function VehicleDetail() {
 
         <TabsContent value="history">
           <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold text-slate-900">Service History</h2>
+            <h2 className="text-lg font-semibold text-slate-900">Service history</h2>
           </div>
           <div className="space-y-3">
             {sessions.length === 0 ? (
@@ -387,7 +415,7 @@ export default function VehicleDetail() {
                       {s.garage_name}
                     </p>
                     <p className="mt-1 text-xs text-slate-500">
-                      {s.date} • {s.mechanic_name} •{" "}
+                      {s.date} - {s.mechanic_name} -{" "}
                       {s.odometer_at_entry?.toLocaleString()} km
                     </p>
                   </div>
@@ -400,9 +428,9 @@ export default function VehicleDetail() {
       </Tabs>
 
       <Dialog open={showSchedDlg} onOpenChange={setShowSchedDlg}>
-        <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Add Maintenance Item</DialogTitle>
+            <DialogTitle>Add service item</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div>
@@ -474,36 +502,6 @@ export default function VehicleDetail() {
                 </Select>
               </div>
             )}
-            <div>
-              <Label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                Last Done Date
-              </Label>
-              <Input
-                type="date"
-                value={schedForm.last_done_date}
-                onChange={(e) =>
-                  setSchedForm((f) => ({
-                    ...f,
-                    last_done_date: e.target.value,
-                  }))
-                }
-              />
-            </div>
-            <div>
-              <Label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                Last Done Mileage (km)
-              </Label>
-              <Input
-                type="number"
-                value={schedForm.last_done_mileage}
-                onChange={(e) =>
-                  setSchedForm((f) => ({
-                    ...f,
-                    last_done_mileage: e.target.value,
-                  }))
-                }
-              />
-            </div>
           </div>
           <div className="flex gap-2">
             <Button
@@ -521,9 +519,9 @@ export default function VehicleDetail() {
       </Dialog>
 
       <Dialog open={showCompDlg} onOpenChange={setShowCompDlg}>
-        <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Add Component / Tire</DialogTitle>
+            <DialogTitle>Add part</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div>
@@ -555,7 +553,7 @@ export default function VehicleDetail() {
                 </SelectContent>
               </Select>
             </div>
-            {["name", "serial_number", "brand"].map((k) => (
+            {["name", "serial_number"].map((k) => (
               <div key={k}>
                 <Label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
                   {k.replace("_", " ")}
@@ -568,69 +566,6 @@ export default function VehicleDetail() {
                 />
               </div>
             ))}
-            <div>
-              <Label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                Position
-              </Label>
-              <Select
-                value={compForm.position}
-                onValueChange={(v) =>
-                  setCompForm((f) => ({ ...f, position: v }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {[
-                    "front-left",
-                    "front-right",
-                    "rear-left",
-                    "rear-right",
-                    "spare",
-                    "n/a",
-                  ].map((p) => (
-                    <SelectItem key={p} value={p}>
-                      {p}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                Health Status
-              </Label>
-              <Select
-                value={compForm.health_status}
-                onValueChange={(v) =>
-                  setCompForm((f) => ({ ...f, health_status: v }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {["good", "worn", "needs_replacement"].map((h) => (
-                    <SelectItem key={h} value={h}>
-                      {h}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                Install Date
-              </Label>
-              <Input
-                type="date"
-                value={compForm.install_date}
-                onChange={(e) =>
-                  setCompForm((f) => ({ ...f, install_date: e.target.value }))
-                }
-              />
-            </div>
           </div>
           <div className="flex gap-2">
             <Button

@@ -1,9 +1,72 @@
 import { seedData } from "@/lib/seed-data";
+import { normalizeMediaItems } from "@/lib/media";
 
 const STORAGE_KEY = "fleetops-local-db";
 const SESSION_KEY = "fleetops-demo-user-id";
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
+
+const mediaFieldsByEntity = {
+  Vehicle: ["photo_gallery", "contract_document"],
+  Driver: [
+    "profile_photo",
+    "fayda_id_photos",
+    "normal_id_photos",
+    "wastena_documents",
+    "contract_document",
+  ],
+  Trip: ["evidence_photos"],
+  ServiceSession: ["attachments"],
+};
+
+const migrateDb = (db) => {
+  const existingUserIds = new Set(
+    (Array.isArray(db.User) ? db.User : []).map((user) => user.id),
+  );
+
+  seedData.User.forEach((user) => {
+    if (!existingUserIds.has(user.id)) {
+      db.User = Array.isArray(db.User) ? db.User : [];
+      db.User.push(clone(user));
+    }
+  });
+
+  Object.entries(seedData).forEach(([entityName, records]) => {
+    if (!Array.isArray(db[entityName])) {
+      db[entityName] = clone(records);
+    }
+  });
+
+  Object.entries(mediaFieldsByEntity).forEach(([entityName, fields]) => {
+    const collection = Array.isArray(db[entityName]) ? db[entityName] : [];
+    collection.forEach((record) => {
+      fields.forEach((fieldName) => {
+        record[fieldName] = normalizeMediaItems(record[fieldName]);
+      });
+    });
+    db[entityName] = collection;
+  });
+
+  if (Array.isArray(db.User)) {
+    db.User = db.User.map((user) =>
+      user?.role === "sub_mechanic" ? { ...user, role: "main_mechanic" } : user,
+    );
+  }
+
+  if (Array.isArray(db.ServiceSession)) {
+    db.ServiceSession = db.ServiceSession.map((session) => {
+      if (!session || !("assigned_sub_mechanic_ids" in session)) {
+        return session;
+      }
+
+      const nextSession = { ...session };
+      delete nextSession.assigned_sub_mechanic_ids;
+      return nextSession;
+    });
+  }
+
+  return db;
+};
 
 const loadDb = () => {
   if (typeof window === "undefined") {
@@ -14,15 +77,15 @@ const loadDb = () => {
   if (!saved) {
     const initial = clone(seedData);
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
-    return initial;
+    return migrateDb(initial);
   }
 
   try {
-    return JSON.parse(saved);
+    return migrateDb(JSON.parse(saved));
   } catch {
     const initial = clone(seedData);
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
-    return initial;
+    return migrateDb(initial);
   }
 };
 
@@ -127,7 +190,7 @@ const createEntityApi = (entityName) => ({
   },
 });
 
-const entityNames = Object.keys(seedData);
+const entityNames = Object.keys(seedData).filter((entityName) => entityName !== "HandoverCheck");
 
 export const appClient = {
   entities: Object.fromEntries(
@@ -139,11 +202,7 @@ export const appClient = {
       const users = ensureCollection(db, "User");
       const storedId =
         typeof window !== "undefined" ? window.localStorage.getItem(SESSION_KEY) : null;
-      const selectedUser =
-        users.find((user) => user.id === storedId) ||
-        users.find((user) => user.role === "admin") ||
-        users[0] ||
-        null;
+      const selectedUser = users.find((user) => user.id === storedId) || null;
 
       if (typeof window !== "undefined" && selectedUser) {
         window.localStorage.setItem(SESSION_KEY, selectedUser.id);
@@ -152,16 +211,31 @@ export const appClient = {
       return selectedUser;
     },
 
+    async signIn(userId) {
+      const db = loadDb();
+      const users = ensureCollection(db, "User");
+      const selectedUser = users.find((user) => user.id === userId) || null;
+
+      if (typeof window !== "undefined") {
+        if (selectedUser) {
+          window.localStorage.setItem(SESSION_KEY, selectedUser.id);
+          window.location.href = "/";
+        }
+      }
+
+      return selectedUser;
+    },
+
     logout() {
       if (typeof window !== "undefined") {
         window.localStorage.removeItem(SESSION_KEY);
-        window.location.reload();
+        window.location.href = "/login";
       }
     },
 
     redirectToLogin() {
       if (typeof window !== "undefined") {
-        window.alert("Demo mode is enabled. A local admin user is loaded automatically.");
+        window.location.href = "/login";
       }
     },
   },

@@ -1,3 +1,5 @@
+﻿import { makePreviewDataUrl } from "@/lib/media";
+
 const now = new Date().toISOString();
 
 export const seedData = {
@@ -8,6 +10,35 @@ export const seedData = {
       email: "admin@fleetops.local",
       role: "admin",
       created_date: "2026-05-01T08:00:00.000Z",
+    },
+    {
+      id: "user-driver-1",
+      full_name: "Dawit Bekele",
+      email: "driver@fleetops.local",
+      role: "driver",
+      driver_id: "drv-001",
+      created_date: "2026-05-01T08:05:00.000Z",
+    },
+    {
+      id: "user-dispatcher-1",
+      full_name: "Mekdes Tadesse",
+      email: "dispatcher@fleetops.local",
+      role: "dispatcher",
+      created_date: "2026-05-01T08:10:00.000Z",
+    },
+    {
+      id: "user-main-mech-1",
+      full_name: "Abebe Kebede",
+      email: "main.mechanic@fleetops.local",
+      role: "main_mechanic",
+      created_date: "2026-05-01T08:15:00.000Z",
+    },
+    {
+      id: "user-sub-mech-1",
+      full_name: "Lina Tesfaye",
+      email: "sub.mechanic@fleetops.local",
+      role: "main_mechanic",
+      created_date: "2026-05-01T08:20:00.000Z",
     },
   ],
 
@@ -61,7 +92,7 @@ export const seedData = {
       current_mileage: 312450,
       status: "active",
       fuel_level: "3/4",
-      notes: "Long-haul Addis Ababa–Jimma–Gambella route",
+      notes: "Long-haul Addis Ababaâ€“Jimmaâ€“Gambella route",
       created_date: "2026-01-10T08:00:00.000Z",
     },
     {
@@ -74,7 +105,7 @@ export const seedData = {
       current_mileage: 487200,
       status: "active",
       fuel_level: "1/2",
-      notes: "Addis Ababa–Djibouti corridor primary hauler",
+      notes: "Addis Ababaâ€“Djibouti corridor primary hauler",
       created_date: "2026-01-12T08:00:00.000Z",
     },
     {
@@ -113,7 +144,7 @@ export const seedData = {
       current_mileage: 394100,
       status: "active",
       fuel_level: "3/4",
-      notes: "Addis Ababa–Bahir Dar–Gondar northern corridor",
+      notes: "Addis Ababaâ€“Bahir Darâ€“Gondar northern corridor",
       created_date: "2026-01-20T08:00:00.000Z",
     },
     {
@@ -139,7 +170,7 @@ export const seedData = {
       current_mileage: 221750,
       status: "active",
       fuel_level: "1/2",
-      notes: "Hawassa–Shashemene–Dilla regional route",
+      notes: "Hawassaâ€“Shashemeneâ€“Dilla regional route",
       created_date: "2026-02-10T08:00:00.000Z",
     },
   ],
@@ -202,7 +233,7 @@ export const seedData = {
       phone: "+251 913 456 789",
       assigned_vehicle_id: "veh-006",
       status: "active",
-      notes: "Eastern corridor, Adama–Dire Dawa",
+      notes: "Eastern corridor, Adamaâ€“Dire Dawa",
       created_date: "2026-02-01T10:00:00.000Z",
     },
     {
@@ -318,7 +349,7 @@ export const seedData = {
       destination: "Dire Dawa",
       departure_datetime: "2026-05-23T04:30",
       cargo_description:
-        "Import goods from Djibouti port — electronics and textiles",
+        "Import goods from Djibouti port â€” electronics and textiles",
       load_weight: "18.2 tons",
       load_notes:
         "Customs cleared at Djibouti. Documents in cab. Deliver to Dire Dawa bonded warehouse.",
@@ -356,7 +387,7 @@ export const seedData = {
       origin: "Adama",
       destination: "Dire Dawa",
       departure_datetime: "2026-05-25T05:30",
-      cargo_description: "Agricultural produce — teff and maize",
+      cargo_description: "Agricultural produce â€” teff and maize",
       load_weight: "12.0 tons",
       load_notes:
         "Loaded at Adama grain storage. Deliver to Dire Dawa market cooperative.",
@@ -376,7 +407,7 @@ export const seedData = {
       departure_datetime: "2026-05-24T08:00",
       cargo_description: "Fish and packaged food from Hawassa lake suppliers",
       load_weight: "5.4 tons",
-      load_notes: "Perishable — deliver within 4 hours of departure.",
+      load_notes: "Perishable â€” deliver within 4 hours of departure.",
       dispatcher_notes: "Priority delivery. Call on arrival.",
       status: "arrived",
       has_vehicle_warnings: false,
@@ -392,7 +423,7 @@ export const seedData = {
       origin: "Jimma",
       destination: "Addis Ababa",
       departure_datetime: "2026-05-26T05:00",
-      cargo_description: "Coffee sacks — Jimma cooperative export batch",
+      cargo_description: "Coffee sacks â€” Jimma cooperative export batch",
       load_weight: "13.2 tons",
       load_notes:
         "High-value cargo. Seal must not be broken before Kality customs.",
@@ -410,7 +441,7 @@ export const seedData = {
       origin: "Addis Ababa",
       destination: "Mekelle",
       departure_datetime: "2026-05-10T04:00",
-      cargo_description: "Relief food aid — WFP consignment",
+      cargo_description: "Relief food aid â€” WFP consignment",
       load_weight: "20.0 tons",
       load_notes:
         "UN markings on cargo. Coordinate with escort through Dessie.",
@@ -421,6 +452,78 @@ export const seedData = {
       departed_at: "2026-05-10T04:30:00.000Z",
       arrived_at: "2026-05-11T16:00:00.000Z",
       created_date: "2026-05-09T15:00:00.000Z",
+    },
+  ],
+
+  TripIssue: [
+    {
+      id: "issue-001",
+      trip_id: "trip-001",
+      vehicle_id: "veh-001",
+      driver_id: "drv-001",
+      driver_name: "Dawit Bekele",
+      title: "Late fuel stop",
+      details: "Fuel stop took longer than planned at Dukem.",
+      status: "open",
+      notes: [
+        {
+          id: "issue-note-001",
+          text: "Need to check the fuel card next time.",
+          author_name: "Dawit Bekele",
+          author_role: "driver",
+          created_date: "2026-05-24T09:15:00.000Z",
+        },
+      ],
+      created_date: "2026-05-24T09:00:00.000Z",
+      updated_date: "2026-05-24T09:15:00.000Z",
+    },
+    {
+      id: "issue-002",
+      trip_id: "trip-005",
+      vehicle_id: "veh-005",
+      driver_id: "drv-005",
+      driver_name: "Bekele Girma",
+      title: "Roadside tire change",
+      details: "Front-right tire blew out on the mountain road.",
+      status: "closed",
+      notes: [
+        {
+          id: "issue-note-002",
+          text: "Roadside fix was done with the spare tire.",
+          author_name: "Bekele Girma",
+          author_role: "driver",
+          created_date: "2026-05-23T12:20:00.000Z",
+        },
+      ],
+      created_date: "2026-05-23T11:35:00.000Z",
+      updated_date: "2026-05-23T12:20:00.000Z",
+    },
+  ],
+
+  MileageReport: [
+    {
+      id: "mileage-001",
+      driver_id: "drv-001",
+      driver_name: "Dawit Bekele",
+      vehicle_id: "veh-001",
+      period_type: "daily",
+      start_date: "2026-05-24",
+      end_date: "2026-05-24",
+      km_traveled: 285,
+      notes: "Addis Ababa to Adama and back.",
+      created_date: "2026-05-24T18:00:00.000Z",
+    },
+    {
+      id: "mileage-002",
+      driver_id: "drv-001",
+      driver_name: "Dawit Bekele",
+      vehicle_id: "veh-001",
+      period_type: "weekly",
+      start_date: "2026-05-19",
+      end_date: "2026-05-25",
+      km_traveled: 1180,
+      notes: "Week of short-haul and city work.",
+      created_date: "2026-05-25T18:00:00.000Z",
     },
   ],
 
@@ -479,7 +582,7 @@ export const seedData = {
         "Front-right tire blowout on mountain descent. Tire changed roadside. Delay: 40 mins.",
       is_part_change: true,
       old_part_serial: "FR-5001",
-      old_part_condition: "blown — sidewall rupture",
+      old_part_condition: "blown â€” sidewall rupture",
       new_part_serial: "FR-5009",
       new_part_brand: "Linglong",
       part_position: "front-right",
@@ -493,7 +596,7 @@ export const seedData = {
       stop_time: "2026-05-24T09:30",
       reason: "fuel_stop",
       notes:
-        "Refueled 195L. Driver reported slight vibration on front-left wheel — monitoring.",
+        "Refueled 195L. Driver reported slight vibration on front-left wheel â€” monitoring.",
       is_part_change: false,
       logged_by: "admin",
       created_date: "2026-05-24T09:40:00.000Z",
@@ -520,7 +623,7 @@ export const seedData = {
         "Rear-right tire worn flat at km marker 612. Replaced with spare. Continued after 45 mins.",
       is_part_change: true,
       old_part_serial: "RR-5002",
-      old_part_condition: "worn flat — tread gone",
+      old_part_condition: "worn flat â€” tread gone",
       new_part_serial: "RR-5010",
       new_part_brand: "Triangle",
       part_position: "rear-right",
@@ -529,164 +632,6 @@ export const seedData = {
     },
   ],
 
-  HandoverCheck: [
-    {
-      id: "handover-001",
-      trip_id: "trip-001",
-      vehicle_id: "veh-001",
-      driver_name: "Dawit Bekele",
-      check_type: "pre_trip",
-      odometer: 128400,
-      fuel_level: "3/4",
-      condition_notes: "Cab clean, lights checked. Cargo secured.",
-      tire_fl_serial: "FL-1001",
-      tire_fr_serial: "FR-1001",
-      tire_rl_serial: "RL-1001",
-      tire_rr_serial: "RR-1001",
-      mismatches_flagged: false,
-      mismatch_details: "",
-      signed_off_at: "2026-05-24T07:10:00.000Z",
-      created_date: "2026-05-24T07:10:00.000Z",
-    },
-    {
-      id: "handover-002",
-      trip_id: "trip-003",
-      vehicle_id: "veh-003",
-      driver_name: "Abel Girma",
-      check_type: "post_trip",
-      odometer: 166950,
-      fuel_level: "1/2",
-      condition_notes: "Rear left tire changed en route.",
-      tire_fl_serial: "FL-3001",
-      tire_fr_serial: "FR-3001",
-      tire_rl_serial: "RL-3009",
-      tire_rr_serial: "RR-3001",
-      mismatches_flagged: true,
-      mismatch_details:
-        "Tire mismatch at: rl — departed with RL-3001, returned with RL-3009",
-      mismatch_explanation:
-        "RL tire punctured near Mojo. Replaced roadside with spare RL-3009.",
-      signed_off_at: "2026-05-20T08:00:00.000Z",
-      created_date: "2026-05-20T08:00:00.000Z",
-    },
-    {
-      id: "handover-003",
-      trip_id: "trip-004",
-      vehicle_id: "veh-004",
-      driver_name: "Tadesse Woldemichael",
-      check_type: "pre_trip",
-      odometer: 311980,
-      fuel_level: "full",
-      condition_notes:
-        "All lights working. Cargo secured with ratchet straps. Tires checked by mechanic Abebe.",
-      tire_fl_serial: "FL-4001",
-      tire_fr_serial: "FR-4001",
-      tire_rl_serial: "RL-4001",
-      tire_rr_serial: "RR-4001",
-      mismatches_flagged: false,
-      mismatch_details: "",
-      signed_off_at: "2026-05-22T05:10:00.000Z",
-      created_date: "2026-05-22T05:10:00.000Z",
-    },
-    {
-      id: "handover-004",
-      trip_id: "trip-004",
-      vehicle_id: "veh-004",
-      driver_name: "Tadesse Woldemichael",
-      check_type: "post_trip",
-      odometer: 312450,
-      fuel_level: "1/4",
-      condition_notes:
-        "All tires intact. Minor dust on undercarriage. No incidents.",
-      tire_fl_serial: "FL-4001",
-      tire_fr_serial: "FR-4001",
-      tire_rl_serial: "RL-4001",
-      tire_rr_serial: "RR-4001",
-      mismatches_flagged: false,
-      mismatch_details: "",
-      signed_off_at: "2026-05-22T14:55:00.000Z",
-      created_date: "2026-05-22T14:55:00.000Z",
-    },
-    {
-      id: "handover-005",
-      trip_id: "trip-005",
-      vehicle_id: "veh-005",
-      driver_name: "Bekele Girma",
-      check_type: "pre_trip",
-      odometer: 486750,
-      fuel_level: "full",
-      condition_notes:
-        "All tires checked. FR tire noted as worn — flagged before departure but trip confirmed.",
-      tire_fl_serial: "FL-5001",
-      tire_fr_serial: "FR-5001",
-      tire_rl_serial: "RL-5001",
-      tire_rr_serial: "RR-5001",
-      mismatches_flagged: false,
-      mismatch_details: "",
-      signed_off_at: "2026-05-23T04:40:00.000Z",
-      created_date: "2026-05-23T04:40:00.000Z",
-    },
-    {
-      id: "handover-006",
-      trip_id: "trip-010",
-      vehicle_id: "veh-005",
-      driver_name: "Bekele Girma",
-      check_type: "pre_trip",
-      odometer: 484900,
-      fuel_level: "full",
-      condition_notes:
-        "Full inspection done. All four tires confirmed good. Spare mounted.",
-      tire_fl_serial: "FL-5001",
-      tire_fr_serial: "FR-5003",
-      tire_rl_serial: "RL-5001",
-      tire_rr_serial: "RR-5002",
-      mismatches_flagged: false,
-      mismatch_details: "",
-      signed_off_at: "2026-05-10T04:15:00.000Z",
-      created_date: "2026-05-10T04:15:00.000Z",
-    },
-    {
-      id: "handover-007",
-      trip_id: "trip-010",
-      vehicle_id: "veh-005",
-      driver_name: "Bekele Girma",
-      check_type: "post_trip",
-      odometer: 487200,
-      fuel_level: "1/4",
-      condition_notes:
-        "RR tire replaced en route at Weldiya due to blowout. New spare fitted. Documented in stop log.",
-      tire_fl_serial: "FL-5001",
-      tire_fr_serial: "FR-5003",
-      tire_rl_serial: "RL-5001",
-      tire_rr_serial: "RR-5010",
-      mismatches_flagged: true,
-      mismatch_details:
-        "Tire mismatch at: rr — departed with RR-5002, returned with RR-5010",
-      mismatch_explanation:
-        "RR tire blew out at Weldiya km marker 612. Replaced with spare RR-5010. Logged in stop-008.",
-      signed_off_at: "2026-05-11T17:00:00.000Z",
-      created_date: "2026-05-11T17:00:00.000Z",
-    },
-    {
-      id: "handover-008",
-      trip_id: "trip-006",
-      vehicle_id: "veh-008",
-      driver_name: "Girma Hailu",
-      check_type: "pre_trip",
-      odometer: 393600,
-      fuel_level: "full",
-      condition_notes:
-        "Tires all confirmed. Cargo straps checked. Lights and horn functional.",
-      tire_fl_serial: "FL-8001",
-      tire_fr_serial: "FR-8001",
-      tire_rl_serial: "RL-8001",
-      tire_rr_serial: "RR-8001",
-      mismatches_flagged: false,
-      mismatch_details: "",
-      signed_off_at: "2026-05-24T06:10:00.000Z",
-      created_date: "2026-05-24T06:10:00.000Z",
-    },
-  ],
 
   ServiceSession: [
     {
@@ -698,7 +643,7 @@ export const seedData = {
       mechanic_name: "Lina Tesfaye",
       status: "open",
       notes:
-        "Full inspection after Mojo trip. Rear left tire replaced en route — confirm and update records.",
+        "Full inspection after Mojo trip. Rear left tire replaced en route â€” confirm and update records.",
       created_date: "2026-05-24T08:30:00.000Z",
     },
     {
@@ -770,7 +715,7 @@ export const seedData = {
       vehicle_id: "veh-001",
       item_name: "Brake inspection",
       action: "checked",
-      notes: "Front pads still serviceable. Rear drums checked — ok.",
+      notes: "Front pads still serviceable. Rear drums checked â€” ok.",
       is_part_replacement: false,
       created_date: "2026-05-10T10:00:00.000Z",
     },
@@ -783,7 +728,7 @@ export const seedData = {
       notes: "Clogged filter swapped during routine service.",
       is_part_replacement: true,
       old_serial: "AF-OLD-17",
-      old_condition: "dirty — clogged",
+      old_condition: "dirty â€” clogged",
       old_removal_reason: "reached service limit",
       new_serial: "AF-NEW-22",
       new_brand: "Donaldson",
@@ -800,8 +745,8 @@ export const seedData = {
       notes: "Tread worn below 2mm. Replaced with new Linglong 315/80R22.5.",
       is_part_replacement: true,
       old_serial: "FL-7001",
-      old_condition: "worn — tread below limit",
-      old_removal_reason: "safety — below minimum tread depth",
+      old_condition: "worn â€” tread below limit",
+      old_removal_reason: "safety â€” below minimum tread depth",
       new_serial: "FL-7009",
       new_brand: "Linglong",
       new_condition: "new",
@@ -817,8 +762,8 @@ export const seedData = {
       notes: "Same batch as FL. All front tires replaced together.",
       is_part_replacement: true,
       old_serial: "FR-7001",
-      old_condition: "worn — tread below limit",
-      old_removal_reason: "safety — below minimum tread depth",
+      old_condition: "worn â€” tread below limit",
+      old_removal_reason: "safety â€” below minimum tread depth",
       new_serial: "FR-7009",
       new_brand: "Linglong",
       new_condition: "new",
@@ -831,10 +776,10 @@ export const seedData = {
       vehicle_id: "veh-007",
       item_name: "Rear-left tire",
       action: "replaced",
-      notes: "Uneven wear detected — suspected alignment issue.",
+      notes: "Uneven wear detected â€” suspected alignment issue.",
       is_part_replacement: true,
       old_serial: "RL-7001",
-      old_condition: "worn — uneven wear pattern",
+      old_condition: "worn â€” uneven wear pattern",
       old_removal_reason: "uneven wear, possible alignment issue",
       new_serial: "RL-7009",
       new_brand: "Triangle",
@@ -851,7 +796,7 @@ export const seedData = {
       notes: "Replaced as matching pair with RL.",
       is_part_replacement: true,
       old_serial: "RR-7001",
-      old_condition: "worn — 30% tread remaining",
+      old_condition: "worn â€” 30% tread remaining",
       old_removal_reason: "replaced as part of full axle set",
       new_serial: "RR-7009",
       new_brand: "Triangle",
@@ -877,10 +822,10 @@ export const seedData = {
       item_name: "Front brake pads",
       action: "replaced",
       notes:
-        "Left and right front pads replaced. Rotors checked — within spec.",
+        "Left and right front pads replaced. Rotors checked â€” within spec.",
       is_part_replacement: true,
       old_serial: "BP-7001",
-      old_condition: "worn — 10% material remaining",
+      old_condition: "worn â€” 10% material remaining",
       old_removal_reason: "at minimum thickness",
       new_serial: "BP-7009",
       new_brand: "Textar",
@@ -909,7 +854,7 @@ export const seedData = {
       is_part_replacement: true,
       old_serial: "RL-4000",
       old_condition: "cracked sidewall",
-      old_removal_reason: "sidewall crack — unsafe for highway",
+      old_removal_reason: "sidewall crack â€” unsafe for highway",
       new_serial: "RL-4001",
       new_brand: "Triangle",
       new_condition: "new",
@@ -926,7 +871,7 @@ export const seedData = {
         "Primary and secondary fuel filters replaced. Old ones dark with sediment.",
       is_part_replacement: true,
       old_serial: "FF-4001",
-      old_condition: "clogged — heavy sediment",
+      old_condition: "clogged â€” heavy sediment",
       old_removal_reason: "routine replacement",
       new_serial: "FF-4009",
       new_brand: "Fleetguard",
@@ -961,7 +906,7 @@ export const seedData = {
       vehicle_id: "veh-008",
       item_name: "Engine oil",
       action: "replaced",
-      notes: "18L 15W-40 replaced. Oil was dark — due at 390,000km.",
+      notes: "18L 15W-40 replaced. Oil was dark â€” due at 390,000km.",
       is_part_replacement: false,
       created_date: "2026-05-15T09:30:00.000Z",
     },
@@ -985,13 +930,46 @@ export const seedData = {
         "Replaced clogged air filter. Dusty roads on northern corridor accelerate clogging.",
       is_part_replacement: true,
       old_serial: "AF-8001",
-      old_condition: "heavily clogged — dust",
+      old_condition: "heavily clogged â€” dust",
       old_removal_reason: "airflow restriction",
       new_serial: "AF-8009",
       new_brand: "Donaldson",
       new_condition: "new",
       part_position: "n/a",
       created_date: "2026-05-15T12:30:00.000Z",
+    },
+  ],
+
+  FinanceEntry: [
+    {
+      id: "finance-001",
+      date: "2026-05-10",
+      cost_type: "service",
+      vehicle_id: "veh-001",
+      session_id: "session-002",
+      amount: 1450,
+      notes: "Oil, filter, and brake check.",
+      created_date: "2026-05-10T17:10:00.000Z",
+    },
+    {
+      id: "finance-002",
+      date: "2026-05-23",
+      cost_type: "part",
+      vehicle_id: "veh-007",
+      session_id: "session-003",
+      amount: 8400,
+      notes: "Set of tires and pads.",
+      created_date: "2026-05-23T16:00:00.000Z",
+    },
+    {
+      id: "finance-003",
+      date: "2026-05-08",
+      cost_type: "other",
+      vehicle_id: "veh-005",
+      session_id: "",
+      amount: 1200,
+      notes: "Tow truck and road help.",
+      created_date: "2026-05-08T18:30:00.000Z",
     },
   ],
 
@@ -1005,7 +983,7 @@ export const seedData = {
       last_done_mileage: 119000,
       next_due_mileage: 129000,
       status: "due_soon",
-      notes: "Due at 129,000km — currently at 128,400km.",
+      notes: "Due at 129,000km â€” currently at 128,400km.",
       created_date: "2026-05-05T09:00:00.000Z",
     },
     {
@@ -1036,7 +1014,7 @@ export const seedData = {
     {
       id: "maint-004",
       vehicle_id: "veh-004",
-      name: "Tire inspection — all four",
+      name: "Tire inspection â€” all four",
       interval_type: "km",
       interval_value: 20000,
       last_done_mileage: 308000,
@@ -1064,7 +1042,7 @@ export const seedData = {
       last_done_mileage: 480000,
       next_due_mileage: 490000,
       status: "overdue",
-      notes: "Due at 490,000km — currently at 487,200km and on active trip.",
+      notes: "Due at 490,000km â€” currently at 487,200km and on active trip.",
       created_date: "2026-04-20T09:00:00.000Z",
     },
     {
@@ -1119,13 +1097,13 @@ export const seedData = {
     {
       id: "maint-011",
       vehicle_id: "veh-007",
-      name: "Full tire replacement — all four",
+      name: "Full tire replacement â€” all four",
       interval_type: "km",
       interval_value: 80000,
       last_done_mileage: 60000,
       next_due_mileage: 140000,
       status: "overdue",
-      notes: "At 143,800km — overdue. Currently being replaced in session-003.",
+      notes: "At 143,800km â€” overdue. Currently being replaced in session-003.",
       created_date: "2026-05-01T09:00:00.000Z",
     },
     {
@@ -1137,7 +1115,7 @@ export const seedData = {
       last_done_mileage: 133000,
       next_due_mileage: 143000,
       status: "overdue",
-      notes: "Overdue — being serviced now in session-003.",
+      notes: "Overdue â€” being serviced now in session-003.",
       created_date: "2026-05-01T09:00:00.000Z",
     },
     {
@@ -1162,7 +1140,7 @@ export const seedData = {
       next_due_mileage: 400000,
       status: "due_soon",
       notes:
-        "Due at 400,000km — currently at 394,100km on active trip to Bahir Dar.",
+        "Due at 400,000km â€” currently at 394,100km on active trip to Bahir Dar.",
       created_date: "2026-05-15T16:00:00.000Z",
     },
     {
@@ -1232,7 +1210,7 @@ export const seedData = {
       type_detail: "7.50R16",
       health_status: "worn",
       install_date: "2026-01-10",
-      notes: "Wear at 45% — monitor",
+      notes: "Wear at 45% â€” monitor",
       is_active: true,
       created_date: "2026-01-10T08:00:00.000Z",
     },
@@ -1247,7 +1225,7 @@ export const seedData = {
       type_detail: "7.50R16",
       health_status: "worn",
       install_date: "2026-01-10",
-      notes: "Wear at 40% — schedule replacement",
+      notes: "Wear at 40% â€” schedule replacement",
       is_active: true,
       created_date: "2026-01-10T08:05:00.000Z",
     },
@@ -1291,7 +1269,7 @@ export const seedData = {
       type_detail: "195R14C",
       health_status: "good",
       install_date: "2026-05-20",
-      notes: "Replaced en route near Mojo — spare fitted",
+      notes: "Replaced en route near Mojo â€” spare fitted",
       is_active: true,
       created_date: "2026-05-20T07:00:00.000Z",
     },
@@ -1306,7 +1284,7 @@ export const seedData = {
       type_detail: "195R14C",
       health_status: "worn",
       install_date: "2026-01-20",
-      notes: "Wear at 35% — overdue for replacement",
+      notes: "Wear at 35% â€” overdue for replacement",
       is_active: true,
       created_date: "2026-01-20T08:10:00.000Z",
     },
@@ -1379,7 +1357,7 @@ export const seedData = {
       type_detail: "315/80R22.5",
       health_status: "worn",
       install_date: "2026-01-15",
-      notes: "Wear at 45% — flag for replacement at next service",
+      notes: "Wear at 45% â€” flag for replacement at next service",
       is_active: true,
       created_date: "2026-01-15T08:00:00.000Z",
     },
@@ -1395,7 +1373,7 @@ export const seedData = {
       type_detail: "315/80R22.5",
       health_status: "worn",
       install_date: "2025-12-01",
-      notes: "Wear at 50% — approaching replacement interval",
+      notes: "Wear at 50% â€” approaching replacement interval",
       is_active: true,
       created_date: "2025-12-01T08:00:00.000Z",
     },
@@ -1410,7 +1388,7 @@ export const seedData = {
       type_detail: "315/80R22.5",
       health_status: "good",
       install_date: "2026-05-23",
-      notes: "Replaced en route at Mieso after blowout — stop-005",
+      notes: "Replaced en route at Mieso after blowout â€” stop-005",
       is_active: true,
       created_date: "2026-05-23T12:00:00.000Z",
     },
@@ -1425,7 +1403,7 @@ export const seedData = {
       type_detail: "315/80R22.5",
       health_status: "worn",
       install_date: "2025-11-15",
-      notes: "Wear at 35% — schedule replacement",
+      notes: "Wear at 35% â€” schedule replacement",
       is_active: true,
       created_date: "2025-11-15T08:00:00.000Z",
     },
@@ -1440,7 +1418,7 @@ export const seedData = {
       type_detail: "315/80R22.5",
       health_status: "good",
       install_date: "2026-05-11",
-      notes: "Replaced en route at Weldiya after blowout — stop-008",
+      notes: "Replaced en route at Weldiya after blowout â€” stop-008",
       is_active: true,
       created_date: "2026-05-11T08:30:00.000Z",
     },
@@ -1501,7 +1479,7 @@ export const seedData = {
       is_active: true,
       created_date: "2026-02-01T08:15:00.000Z",
     },
-    // veh-007 tires — all new from session-003
+    // veh-007 tires â€” all new from session-003
     {
       id: "comp-012",
       vehicle_id: "veh-007",
@@ -1513,7 +1491,7 @@ export const seedData = {
       type_detail: "315/80R22.5",
       health_status: "good",
       install_date: "2026-05-23",
-      notes: "New — installed in session-003",
+      notes: "New â€” installed in session-003",
       is_active: true,
       created_date: "2026-05-23T10:10:00.000Z",
     },
@@ -1528,7 +1506,7 @@ export const seedData = {
       type_detail: "315/80R22.5",
       health_status: "good",
       install_date: "2026-05-23",
-      notes: "New — installed in session-003",
+      notes: "New â€” installed in session-003",
       is_active: true,
       created_date: "2026-05-23T10:25:00.000Z",
     },
@@ -1543,7 +1521,7 @@ export const seedData = {
       type_detail: "315/80R22.5",
       health_status: "good",
       install_date: "2026-05-23",
-      notes: "New — installed in session-003. Alignment check pending.",
+      notes: "New â€” installed in session-003. Alignment check pending.",
       is_active: true,
       created_date: "2026-05-23T10:50:00.000Z",
     },
@@ -1558,7 +1536,7 @@ export const seedData = {
       type_detail: "315/80R22.5",
       health_status: "good",
       install_date: "2026-05-23",
-      notes: "New — installed in session-003",
+      notes: "New â€” installed in session-003",
       is_active: true,
       created_date: "2026-05-23T11:05:00.000Z",
     },
@@ -1602,7 +1580,7 @@ export const seedData = {
       type_detail: "315/80R22.5",
       health_status: "worn",
       install_date: "2025-10-05",
-      notes: "Wear at 40% — due for replacement at 400,000km",
+      notes: "Wear at 40% â€” due for replacement at 400,000km",
       is_active: true,
       created_date: "2025-10-05T08:00:00.000Z",
     },
@@ -1617,7 +1595,7 @@ export const seedData = {
       type_detail: "315/80R22.5",
       health_status: "worn",
       install_date: "2025-10-05",
-      notes: "Wear at 38% — replace alongside RL",
+      notes: "Wear at 38% â€” replace alongside RL",
       is_active: true,
       created_date: "2025-10-05T08:05:00.000Z",
     },
@@ -1684,7 +1662,7 @@ export const seedData = {
     {
       id: "notif-001",
       type: "maintenance",
-      title: "Rear tire replacement overdue — AA-31987",
+      title: "Rear tire replacement overdue â€” AA-31987",
       message:
         "Vehicle AA-31987 rear tire replacement is overdue by 7 weeks. Vehicle is currently in garage session-001.",
       severity: "critical",
@@ -1698,7 +1676,7 @@ export const seedData = {
     {
       id: "notif-002",
       type: "dispatch",
-      title: "Trip departed — Addis Ababa to Adama",
+      title: "Trip departed â€” Addis Ababa to Adama",
       message:
         "Vehicle AA-12034 departed with Dawit Bekele. 4.8 tons of packaged goods. Fuel stop expected at Dukem.",
       severity: "info",
@@ -1712,7 +1690,7 @@ export const seedData = {
     {
       id: "notif-003",
       type: "garage",
-      title: "Garage session opened — AA-31987",
+      title: "Garage session opened â€” AA-31987",
       message:
         "Vehicle AA-31987 entered Kality Fleet Garage. Mechanic: Lina Tesfaye. Rear tire mismatch from Mojo trip to be confirmed.",
       severity: "warning",
@@ -1726,7 +1704,7 @@ export const seedData = {
     {
       id: "notif-004",
       type: "garage",
-      title: "Full tire replacement started — AA-78341",
+      title: "Full tire replacement started â€” AA-78341",
       message:
         "Vehicle AA-78341 entered Kality Fleet Garage. All 4 tires being replaced by mechanic Abebe Kebede.",
       severity: "warning",
@@ -1740,9 +1718,9 @@ export const seedData = {
     {
       id: "notif-005",
       type: "garage",
-      title: "Tire replaced en route — AA-67894 at Mieso",
+      title: "Tire replaced en route â€” AA-67894 at Mieso",
       message:
-        "FR tire FR-5001 blew out near Mieso on Addis–Dire Dawa trip. Replaced roadside with FR-5009 (Linglong). Logged in stop-005.",
+        "FR tire FR-5001 blew out near Mieso on Addisâ€“Dire Dawa trip. Replaced roadside with FR-5009 (Linglong). Logged in stop-005.",
       severity: "critical",
       is_read: false,
       recipient_roles: "admin",
@@ -1754,9 +1732,9 @@ export const seedData = {
     {
       id: "notif-006",
       type: "maintenance",
-      title: "Engine oil overdue — AA-67894",
+      title: "Engine oil overdue â€” AA-67894",
       message:
-        "Vehicle AA-67894 engine oil service is overdue. Due at 490,000km — currently at 487,200km and on active trip to Dire Dawa.",
+        "Vehicle AA-67894 engine oil service is overdue. Due at 490,000km â€” currently at 487,200km and on active trip to Dire Dawa.",
       severity: "critical",
       is_read: false,
       recipient_roles: "admin",
@@ -1768,7 +1746,7 @@ export const seedData = {
     {
       id: "notif-007",
       type: "maintenance",
-      title: "Brake inspection overdue — AA-67894",
+      title: "Brake inspection overdue â€” AA-67894",
       message:
         "Vehicle AA-67894 brake inspection is 5 weeks overdue. Vehicle is currently on active long-haul trip to Dire Dawa.",
       severity: "critical",
@@ -1782,7 +1760,7 @@ export const seedData = {
     {
       id: "notif-008",
       type: "dispatch",
-      title: "Trip departed — Addis Ababa to Bahir Dar",
+      title: "Trip departed â€” Addis Ababa to Bahir Dar",
       message:
         "Vehicle AA-53672 departed with Girma Hailu. 16.8 tons of edible oil and flour. Fuel stop planned at Dejen.",
       severity: "info",
@@ -1796,9 +1774,9 @@ export const seedData = {
     {
       id: "notif-009",
       type: "dispatch",
-      title: "Trip departed with warnings — AA-67894 to Dire Dawa",
+      title: "Trip departed with warnings â€” AA-67894 to Dire Dawa",
       message:
-        "Vehicle AA-67894 departed with Bekele Girma carrying 18.2 tons. Vehicle has 3 active maintenance warnings — oil overdue, brake overdue, front tire overdue.",
+        "Vehicle AA-67894 departed with Bekele Girma carrying 18.2 tons. Vehicle has 3 active maintenance warnings â€” oil overdue, brake overdue, front tire overdue.",
       severity: "warning",
       is_read: false,
       recipient_roles: "admin",
@@ -1810,7 +1788,7 @@ export const seedData = {
     {
       id: "notif-010",
       type: "dispatch",
-      title: "Trip arrived — Hawassa to Shashemene",
+      title: "Trip arrived â€” Hawassa to Shashemene",
       message:
         "Vehicle HR-20341 arrived at Shashemene with Tigist Alemu. Perishable fish delivery completed on time.",
       severity: "info",
@@ -1824,7 +1802,7 @@ export const seedData = {
     {
       id: "notif-011",
       type: "maintenance",
-      title: "Engine oil due soon — OR-11432",
+      title: "Engine oil due soon â€” OR-11432",
       message:
         "Vehicle OR-11432 engine oil service due in 1,400km. Currently at 198,600km, due at 200,000km.",
       severity: "warning",
@@ -1838,23 +1816,23 @@ export const seedData = {
     {
       id: "notif-012",
       type: "garage",
-      title: "Tire mismatch resolved — AA-67894 trip-010",
+      title: "Tire mismatch resolved â€” AA-67894 trip-010",
       message:
-        "RR tire mismatch on Mekelle trip explained: blowout at Weldiya km 612. RR-5002 removed, RR-5010 fitted. Full documentation in handover-007.",
+        "RR tire change on the Mekelle trip was logged after the blowout at Weldiya km 612. RR-5002 was removed and RR-5010 was fitted.",
       severity: "info",
       is_read: true,
       recipient_roles: "admin",
       vehicle_plate: "AA-67894",
-      related_type: "HandoverCheck",
-      related_id: "handover-007",
+      related_type: "Trip",
+      related_id: "trip-010",
       created_date: "2026-05-11T17:05:00.000Z",
     },
     {
       id: "notif-013",
       type: "maintenance",
-      title: "Rear tire replacement due soon — AA-53672",
+      title: "Rear tire replacement due soon â€” AA-53672",
       message:
-        "Vehicle AA-53672 rear tires due for replacement at 400,000km — currently at 394,100km and on active trip to Bahir Dar.",
+        "Vehicle AA-53672 rear tires due for replacement at 400,000km â€” currently at 394,100km and on active trip to Bahir Dar.",
       severity: "warning",
       is_read: false,
       recipient_roles: "admin",
@@ -1866,9 +1844,9 @@ export const seedData = {
     {
       id: "notif-014",
       type: "dispatch",
-      title: "Trip closed — Addis Ababa to Jimma",
+      title: "Trip closed â€” Addis Ababa to Jimma",
       message:
-        "Vehicle AA-45231 returned from Jimma. 14.5 tons of cement delivered. No incidents. Pre and post handover match.",
+        "Vehicle AA-45231 returned from Jimma. 14.5 tons of cement were delivered. No issues were found.",
       severity: "info",
       is_read: true,
       recipient_roles: "admin",
@@ -1880,7 +1858,7 @@ export const seedData = {
     {
       id: "notif-015",
       type: "dispatch",
-      title: "Trip closed — Addis Ababa to Mekelle",
+      title: "Trip closed â€” Addis Ababa to Mekelle",
       message:
         "Vehicle AA-67894 completed Mekelle WFP food aid delivery. RR tire mismatch flagged and documented. Schedule immediate service.",
       severity: "warning",
@@ -1899,7 +1877,7 @@ export const seedData = {
       vehicle_id: "veh-003",
       mechanic_name: "Lina Tesfaye",
       recommendations:
-        "Inspect rear axle alignment during current service window. Battery BAT-3001 is worn — replace before next dispatch.",
+        "Inspect rear axle alignment during current service window. Battery BAT-3001 is worn â€” replace before next dispatch.",
       priority: "high",
       due_date: "2026-05-26",
       status: "pending",
@@ -1910,7 +1888,7 @@ export const seedData = {
       vehicle_id: "veh-005",
       mechanic_name: "Abebe Kebede",
       recommendations:
-        "Front-left tire FL-5001 is at 50% wear. Schedule replacement before next long-haul Djibouti trip. Brake system is 5 weeks overdue — do not dispatch until inspected.",
+        "Front-left tire FL-5001 is at 50% wear. Schedule replacement before next long-haul Djibouti trip. Brake system is 5 weeks overdue â€” do not dispatch until inspected.",
       priority: "urgent",
       due_date: "2026-05-28",
       status: "pending",
@@ -1932,7 +1910,7 @@ export const seedData = {
       vehicle_id: "veh-008",
       mechanic_name: "Sisay Tadesse",
       recommendations:
-        "Rear tires RL-8001 and RR-8001 both under 40% tread. Replace both before 400,000km mark. Vehicle is on active trip — schedule on return from Bahir Dar.",
+        "Rear tires RL-8001 and RR-8001 both under 40% tread. Replace both before 400,000km mark. Vehicle is on active trip â€” schedule on return from Bahir Dar.",
       priority: "high",
       due_date: "2026-05-30",
       status: "pending",
@@ -1954,7 +1932,7 @@ export const seedData = {
       vehicle_id: "veh-001",
       mechanic_name: "Sisay Tadesse",
       recommendations:
-        "Rear tires RL-1001 and RR-1001 both showing wear above 40%. Schedule replacement within the next 5,000km. Engine oil due in 600km — do not delay past current trip.",
+        "Rear tires RL-1001 and RR-1001 both showing wear above 40%. Schedule replacement within the next 5,000km. Engine oil due in 600km â€” do not delay past current trip.",
       priority: "medium",
       due_date: "2026-06-01",
       status: "pending",
@@ -1962,3 +1940,59 @@ export const seedData = {
     },
   ],
 };
+
+const attachFallbackMedia = () => {
+  seedData.Vehicle.forEach((vehicle) => {
+    if (!Array.isArray(vehicle.photo_gallery) || vehicle.photo_gallery.length === 0) {
+      vehicle.photo_gallery = [
+        {
+          id: `${vehicle.id}-photo-1`,
+          name: `${vehicle.plate_number}.png`,
+          type: "image/svg+xml",
+          url: makePreviewDataUrl({
+            title: vehicle.plate_number,
+            subtitle: `${vehicle.make} ${vehicle.model}`,
+            seed: vehicle.id,
+          }),
+        },
+      ];
+    }
+
+    if (!Array.isArray(vehicle.contract_document)) {
+      vehicle.contract_document = [];
+    }
+  });
+
+  seedData.Driver.forEach((driver) => {
+    if (!Array.isArray(driver.profile_photo) || driver.profile_photo.length === 0) {
+      driver.profile_photo = [
+        {
+          id: `${driver.id}-profile-1`,
+          name: `${driver.name}.png`,
+          type: "image/svg+xml",
+          url: makePreviewDataUrl({
+            title: driver.name,
+            subtitle: "Driver",
+            seed: driver.id,
+          }),
+        },
+      ];
+    }
+
+    if (!Array.isArray(driver.fayda_id_photos)) driver.fayda_id_photos = [];
+    if (!Array.isArray(driver.normal_id_photos)) driver.normal_id_photos = [];
+    if (!Array.isArray(driver.wastena_documents)) driver.wastena_documents = [];
+    if (!Array.isArray(driver.contract_document)) driver.contract_document = [];
+  });
+
+  seedData.Trip.forEach((trip) => {
+    if (!Array.isArray(trip.evidence_photos)) trip.evidence_photos = [];
+  });
+
+  seedData.ServiceSession.forEach((session) => {
+    if (!Array.isArray(session.attachments)) session.attachments = [];
+  });
+};
+
+attachFallbackMedia();
+
